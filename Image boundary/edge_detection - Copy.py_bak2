@@ -1,0 +1,103 @@
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy.lib.stride_tricks import as_strided
+from scipy import ndimage
+
+# function below used to compress image for quicker calculation
+
+def strided_rescale(g, bin_fac):
+    strided = as_strided(g,
+        shape=(g.shape[0]//bin_fac, g.shape[1]//bin_fac, bin_fac, bin_fac),
+        strides=((g.strides[0]*bin_fac, g.strides[1]*bin_fac)+g.strides))
+    return strided.mean(axis=-1).mean(axis=-1)
+
+# function above used to compress image for quicker calculation
+
+original_img = np.array(Image.open('E:\Python\Image boundary\\test images\\image-201-1-5-5-0.bmp').convert('L'), 'i')     # open target image
+ratio = int(original_img.shape[0]/512)
+# ratio can be defined by user, now all images will be compressed to 512X512 px
+rescaled_image = np.flipud(np.uint8(strided_rescale(original_img, ratio)))
+
+img = Image.fromarray(rescaled_image, 'L')                  # transfer rescaled array to bmp for check purpose
+img.save('E:\Python\Image boundary\\img.bmp')     # save rescaled image to bmp for check purpose
+
+
+# Start to calculate  profile of image
+
+sum_x = np.zeros(shape=(rescaled_image.shape[1]), dtype=int)
+sum_y = np.zeros(shape=(rescaled_image.shape[0]), dtype=int)
+
+for c in range(rescaled_image.shape[0]):
+    for r in range(rescaled_image.shape[1]):
+        sum_x[c] += rescaled_image[r][c]
+
+for r in range(rescaled_image.shape[1]):
+    for c in range(rescaled_image.shape[0]):
+        sum_y[r] += rescaled_image[r][c]
+
+x_profile = sum_x / rescaled_image.shape[0]
+y_profile = sum_y / rescaled_image.shape[1]
+
+# Finish to calculate both X and Y profile of image
+
+x_diff_abs = np.absolute(np.diff(x_profile))
+y_diff_abs = np.absolute(np.diff(y_profile))
+
+x_peak = np.where(x_diff_abs > (x_diff_abs.mean()*4))[0]           # 4 times larger than  mean is defined as a peak
+y_peak = np.where(y_diff_abs > (y_diff_abs.mean()*4))[0]
+# find the edge of pattern by the  diff peak which  is closest to lower std part
+edge_px_x = 0
+edge_px_y = 0
+# detect x direction edge
+if x_peak.size > 0:
+    x_l = x_peak[0]
+    x_r = x_peak[-1]
+    if abs(np.std(x_diff_abs[:x_l])-np.std(x_diff_abs)) > abs(np.std(x_diff_abs[x_r:])-np.std(x_diff_abs)):
+        edge_px_x = x_r * ratio
+        if np.diff(x_profile)[x_r] >0:
+            x_dir = 'left edge'
+        else:
+            x_dir = 'right edge'
+    elif abs(np.std(x_diff_abs[:x_l])-np.std(x_diff_abs)) < abs(np.std(x_diff_abs[x_r:])-np.std(x_diff_abs)):
+        edge_px_x = x_l * ratio
+        if np.diff(x_profile)[x_l] <0:
+            x_dir = 'right edge'
+        else:
+            x_dir = 'left edge'
+    else:
+        print('Cannot detect edge correctly!!!')
+else:
+    x_dir = 'center'
+# detect x direction edge
+# detect y direction edge
+if  y_peak.size > 0:
+    y_b = y_peak[0]
+    y_t= y_peak[-1]
+    if abs(np.std(y_diff_abs[:y_b])-np.std(y_diff_abs)) > abs(np.std(y_diff_abs[y_t:])-np.std(y_diff_abs)):
+        edge_px_y = y_t * ratio
+        if np.diff(y_profile)[y_t] > 0:
+            y_dir = 'bottom edge'
+        else:
+            y_dir = 'top edge'
+    elif abs(np.std(y_diff_abs[:y_b])-np.std(y_diff_abs)) < abs(np.std(y_diff_abs[y_t:])-np.std(y_diff_abs)):
+        edge_px_y = y_b * ratio
+        if np.diff(y_profile)[y_b] < 0:
+            y_dir = 'top edge'
+        else:
+            y_dir = 'bottom edge'
+    else:
+        print('Cannot detect edge correctly!!!')
+else:
+    y_dir = 'center'
+# detect y direction edge
+
+print(x_dir, '\n', edge_px_x, '\n', y_dir, '\n', edge_px_y)
+
+plt.plot(x_diff_abs)
+plt.xlabel('X_profile')
+plt.show()
+plt.plot(y_diff_abs)
+plt.xlabel('Y_profile')
+plt.show()
+

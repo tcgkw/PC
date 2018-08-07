@@ -1,0 +1,52 @@
+from PIL import Image
+import numpy as np
+import matplotlib.pyplot as plt
+from numpy.lib.stride_tricks import as_strided
+
+ratio = 16
+# original_img = np.array(Image.open('image-201-1-6-6-0.bmp').convert('L'), dtype=np.uint8)    # open target image
+original_img = np.array(Image.open('image-201-1-11-11-0.bmp').convert('L'), 'i')    # open target image
+threshold = 25
+
+# function below used to compress image for quicker calculation
+
+
+def strided_rescale(g, bin_fac):
+    strided = as_strided(g,
+        shape=(g.shape[0]//bin_fac, g.shape[1]//bin_fac, bin_fac, bin_fac),
+        strides=((g.strides[0]*bin_fac, g.strides[1]*bin_fac)+g.strides))
+    return strided.mean(axis=-1).mean(axis=-1)
+
+# function above used to compress image for quicker calculation
+
+
+rescaled_image = np.uint8(strided_rescale(original_img, ratio))   # ratio can be defined by user
+
+img = Image.fromarray(rescaled_image, 'L')                  # transfer rescaled array to bmp for check purpose
+img.save('E:\Python\Image boundary\\img.bmp')     # save rescaled image to bmp for check purpose
+
+# print(rescaled_image.min(), rescaled_image.max(), rescaled_image.mean(), rescaled_image.std())
+
+
+# Start to calculate vertical profile of image
+
+sum = np.zeros(shape=(rescaled_image.shape[1]), dtype=int)
+
+for c in range(rescaled_image.shape[0]):
+    for r in range(rescaled_image.shape[1]):
+        sum[c] += rescaled_image[r][c]
+
+x_profile = sum / rescaled_image.shape[0]
+
+# print(y_profile)
+
+# Finish to calculate vertical profile of image
+temp = np.diff(x_profile)
+
+# print(temp)
+print(np.where(temp >= threshold))    # find the edge of pattern by the max diff value which closest to center
+print(np.absolute(temp).mean())
+
+plt.plot(np.diff(x_profile))
+plt.show()
+

@@ -1,0 +1,67 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'E:\Python\PitchWalking_GUI\PitchWalking_GUI.ui'
+#
+# Created by: PyQt5 UI code generator 5.10.1
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_MainWindow(object):
+    def setupUi(self, MainWindow):
+        MainWindow.setObjectName("Pitch Walking")
+        MainWindow.resize(700, 423)
+        font = QtGui.QFont()
+        font.setBold(True)
+        font.setWeight(75)
+        MainWindow.setFont(font)
+        self.centralwidget = QtWidgets.QWidget(MainWindow)
+        self.centralwidget.setObjectName("centralwidget")
+        self.SearchPath = QtWidgets.QTextEdit(self.centralwidget)
+        self.SearchPath.setGeometry(QtCore.QRect(220, 90, 361, 31))
+        self.SearchPath.setObjectName("SearchPath")
+        self.label = QtWidgets.QLabel(self.centralwidget)
+        self.label.setGeometry(QtCore.QRect(70, 90, 131, 31))
+        self.label.setObjectName("label")
+        self.label_2 = QtWidgets.QLabel(self.centralwidget)
+        self.label_2.setGeometry(QtCore.QRect(220, 130, 341, 21))
+        self.label_2.setObjectName("label_2")
+        self.radioButton_forX = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_forX.setGeometry(QtCore.QRect(230, 180, 82, 17))
+        self.radioButton_forX.setChecked(True)
+        self.radioButton_forX.setObjectName("radioButton_forX")
+        self.label_3 = QtWidgets.QLabel(self.centralwidget)
+        self.label_3.setGeometry(QtCore.QRect(70, 170, 151, 31))
+        self.label_3.setObjectName("label_3")
+        self.radioButton_forY = QtWidgets.QRadioButton(self.centralwidget)
+        self.radioButton_forY.setGeometry(QtCore.QRect(360, 180, 82, 17))
+        self.radioButton_forY.setObjectName("radioButton_forY")
+        self.pushButton_forStart = QtWidgets.QPushButton(self.centralwidget)
+        self.pushButton_forStart.setGeometry(QtCore.QRect(220, 260, 111, 41))
+        self.pushButton_forStart.setObjectName("pushButton_forStart")
+        MainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtWidgets.QMenuBar(MainWindow)
+        self.menubar.setEnabled(False)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 700, 21))
+        self.menubar.setObjectName("menubar")
+        MainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtWidgets.QStatusBar(MainWindow)
+        self.statusbar.setObjectName("tcgkw")
+        self.statusbar.showMessage('J')
+        MainWindow.setStatusBar(self.statusbar)
+
+        self.retranslateUi(MainWindow)
+        QtCore.QMetaObject.connectSlotsByName(MainWindow)
+        self.pushButton_forStart.clicked.connect(self.on_click)
+
+    def retranslateUi(self, MainWindow):
+        _translate = QtCore.QCoreApplication.translate
+        MainWindow.setWindowTitle(_translate("MainWindow", "Pitch Walking"))
+        self.label.setText(_translate("MainWindow", "Please enter path here"))
+        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p>(Please use \\\\ instead of , e.g.Y:\\\\Temp3\\\\L21\\\\Test)</p></body></html>"))
+        self.radioButton_forX.setText(_translate("MainWindow", "X"))
+        self.label_3.setText(_translate("MainWindow", "Please select direction"))
+        self.radioButton_forY.setText(_translate("MainWindow", "Y"))
+        self.pushButton_forStart.setText(_translate("MainWindow", "Start"))
+

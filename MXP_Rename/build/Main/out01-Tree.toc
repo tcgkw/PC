@@ -1,0 +1,6 @@
+('c:\\program files '
+ '(x86)\\python36-32\\lib\\site-packages\\jdcal-1.4-py3.6.egg',
+ None,
+ {'*.so', '*.pyc', '*.pyo', '*.py', '*.pyd', 'EGG-INFO'},
+ 'DATA',
+ [])
